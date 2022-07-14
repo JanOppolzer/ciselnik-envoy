@@ -2,7 +2,7 @@ TARGET_SERVER=server.example.org
 TARGET_USER=web
 TARGET_DIR=ciselnik
 
-REPOSITORY=https://github.com/JanOppolzer/ciselnik
+REPOSITORY=https://github.com/JanOppolzer/ciselnik-laravel
 
 APP_NAME=Číselnik
 APP_ENV=production

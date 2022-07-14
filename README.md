@@ -1,4 +1,4 @@
-# Číselnik-Envoy
+# Číselník-Envoy
 
 In this repository, you can find a deployment script for [Laravel](https://laravel.com) application called [Číselník](https://github.com/JanOppolzer/ciselnik-laravel). This script is written in [Laravel Envoy](https://laravel.com/docs/9.x/envoy).
 
