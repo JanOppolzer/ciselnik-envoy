@@ -107,9 +107,9 @@
         s%MAIL_HOST=.*%MAIL_HOST={{ $mail_host }}%; \
         s%MAIL_PORT=.*%MAIL_PORT={{ $mail_port }}%; \
         s%MAIL_FROM_ADDRESS=.*%MAIL_FROM_ADDRESS={{ $mail_from_address }}%; \
-        s%MAIL_FROM_NAME=.*%MAIL_FROM_NAME={{ $mail_from_name }}%; \
+        s%MAIL_FROM_NAME=.*%MAIL_FROM_NAME=\"{{ $mail_from_name }}\"%; \
         s%MAIL_REPLYTO_ADDRESS=.*%MAIL_REPLYTO_ADDRESS={{ $mail_replyto_address }}%; \
-        s%MAIL_REPLYTO_NAME=.*%MAIL_REPLYTO_NAME={{ $mail_replyto_name }}%; \
+        s%MAIL_REPLYTO_NAME=.*%MAIL_REPLYTO_NAME=\"{{ $mail_replyto_name }}\"%; \
         s%MAIL_NOTIFY_NEW_OBJECT=.*%MAIL_NOTIFY_NEW_OBJECT={{ $mail_notify_new_object }}%" .env
 
     echo "Symlink ~/{{ $dir }}/.env"
