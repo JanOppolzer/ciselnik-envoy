@@ -19,8 +19,15 @@ LDAP_USERNAME="uid=user,ou=People,dc=example,dc=org"
 LDAP_PASSWORD="SafePassw0rd!"
 LDAP_PORT=636
 LDAP_BASE_DN="ou=Organizations,dc=example,dc=org"
+LDAP_BASE_DN_CESNET_CA="dc=cesnet-ca,dc=cz"
 LDAP_SSL=true
 LDAP_TLS=false
 
 LOG_SLACK_WEBHOOK_URL=https://hooks.example.org/services/token
 LOG_SLACK_CHANNEL=#ciselnik
+
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+MAIL_REPLYTO_ADDRESS="info@example.org"
+MAIL_REPLYTO_NAME="HelpDesk"
+MAIL_NOTIFY_NEW_OBJECT="notify@example.org"

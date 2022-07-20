@@ -9,7 +9,7 @@
             'TARGET_SERVER', 'TARGET_USER', 'TARGET_DIR',
             'REPOSITORY',
             'APP_NAME', 'APP_ENV', 'APP_DEBUG', 'APP_URL',
-            'LDAP_HOST', 'LDAP_USERNAME', 'LDAP_PASSWORD', 'LDAP_BASE_DN',
+            'LDAP_HOST', 'LDAP_USERNAME', 'LDAP_PASSWORD', 'LDAP_BASE_DN', 'LDAP_BASE_DN_CESNET_CA',
             'DB_HOST', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD',
         ])->notEmpty();
     } catch(Exception $e) {
@@ -40,11 +40,21 @@
     $ldap_password = $_ENV['LDAP_PASSWORD'];
     $ldap_port = $_ENV['LDAP_PORT'] ?? '636';
     $ldap_base_dn = $_ENV['LDAP_BASE_DN'];
+    $ldap_base_dn_cesnet_ca = $_ENV['LDAP_BASE_DN_CESNET_CA'];
     $ldap_ssl = $_ENV['LDAP_SSL'] ?? 'true';
     $ldap_tls = $_ENV['LDAP_TLS'] ?? 'false';
 
     $slack_hook = $_ENV['LOG_SLACK_WEBHOOK_URL'] ?? null;
     $slack_channel = $_ENV['LOG_SLACK_CHANNEL'] ?? null;
+
+    $mail_mailer = $_ENV['MAIL_MAILER'] ?? 'log';
+    $mail_host = $_ENV['MAIL_HOST'] ?? 'localhost';
+    $mail_port = $_ENV['MAIL_PORT'] ?? '25';
+    $mail_from_address = $_ENV['MAIL_FROM_ADDRESS'] ?? null;
+    $mail_from_name = $_ENV['MAIL_FROM_NAME'] ?? null;
+    $mail_replyto_address = $_ENV['MAIL_REPLYTO_ADDRESS'] ?? null;
+    $mail_replyto_name = $_ENV['MAIL_REPLYTO_NAME'] ?? null;
+    $mail_notify_new_object = $_ENV['MAIL_NOTIFY_NEW_OBJECT'] ?? null;
 
     $destination = (new DateTime)->format('YmdHis');
     $symlink = 'current';
@@ -65,13 +75,17 @@
     echo "Clone '{{ $branch }}' branch of {{ $repository }} into ~/{{ $dir }}/{{ $destination }}/"
         git clone {{ $repository }} --branch={{ $branch }} --depth=1 -q ~/{{ $dir }}/{{ $destination }}
 
-    echo "Prepare ~/{{ $dir }}/.env"
+    echo "Backup existing ~/{{ $dir }}/.env"
+        if [ -f .env ]; then
+            mv .env .env-{{ $destination }}.bak
+        fi
+
+    echo "Prepare new ~/{{ $dir }}/.env"
         if [ ! -f .env ]; then
             cp {{ $destination }}/.env.example .env
         fi
 
     echo "Update ~/{{ $dir }}/.env"
-        cp .env .env-{{ $destination }}.bak
         sed -i "s%APP_NAME=.*%APP_NAME={{ $app_name }}%; \
         s%APP_ENV=.*%APP_ENV={{ $app_env }}%; \
         s%APP_DEBUG=.*%APP_DEBUG={{ $app_debug }}%; \
@@ -85,9 +99,18 @@
         s%LDAP_PASSWORD=.*%LDAP_PASSWORD=\"{{ $ldap_password }}\"%; \
         s%LDAP_PORT=.*%LDAP_PORT={{ $ldap_port }}%; \
         s%LDAP_BASE_DN=.*%LDAP_BASE_DN=\"{{ $ldap_base_dn }}\"%; \
+        s%LDAP_BASE_DN_CESNET_CA=.*%LDAP_BASE_DN_CESNET_CA=\"{{ $ldap_base_dn_cesnet_ca }}\"%; \
         s%LDAP_SSL=.*%LDAP_SSL={{ $ldap_ssl }}%; \
         s%LDAP_TLS=.*%LDAP_TLS={{ $ldap_tls }}%; \
-        s%LOG_SLACK_WEBHOOK_URL=.*%LOG_SLACK_WEBHOOK_URL={{ $slack_hook }}%" .env
+        s%LOG_SLACK_WEBHOOK_URL=.*%LOG_SLACK_WEBHOOK_URL={{ $slack_hook }}%; \
+        s%MAIL_MAILER=.*%MAIL_MAILER={{ $mail_mailer }}%; \
+        s%MAIL_HOST=.*%MAIL_HOST={{ $mail_host }}%; \
+        s%MAIL_PORT=.*%MAIL_PORT={{ $mail_port }}%; \
+        s%MAIL_FROM_ADDRESS=.*%MAIL_FROM_ADDRESS={{ $mail_from_address }}%; \
+        s%MAIL_FROM_NAME=.*%MAIL_FROM_NAME={{ $mail_from_name }}%; \
+        s%MAIL_REPLYTO_ADDRESS=.*%MAIL_REPLYTO_ADDRESS={{ $mail_replyto_address }}%; \
+        s%MAIL_REPLYTO_NAME=.*%MAIL_REPLYTO_NAME={{ $mail_replyto_name }}%; \
+        s%MAIL_NOTIFY_NEW_OBJECT=.*%MAIL_NOTIFY_NEW_OBJECT={{ $mail_notify_new_object }}%" .env
 
     echo "Symlink ~/{{ $dir }}/.env"
         ln -s ../.env ~/{{ $dir }}/{{ $destination }}/.env
